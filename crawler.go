@@ -125,6 +125,9 @@ func CrawlGoQuery(szurl string, chPI chan PageItem, ch2Crawl chan string) {
 	// 	return
 	// }
 
+	if crwedUrls.Check(szurl) {
+		return
+	}
 	crwedUrls.Add(szurl)
 
 	doc, err := goquery.NewDocument(szurl)
@@ -136,10 +139,10 @@ func CrawlGoQuery(szurl string, chPI chan PageItem, ch2Crawl chan string) {
 	doc.Find(".news_main").Each(func(i int, s *goquery.Selection) {
 		// For each item found, get the band and title
 		title := s.Find(".article_title").Text()
-		info := s.Find(".time").Text()
+		meta := s.Find(".time").Text()
 		content := s.Find("p").Text()
 
-		chPI <- PageItem{szurl, title + info + content}
+		chPI <- PageItem{szurl, title, meta, content}
 	})
 
 	// all urls this page

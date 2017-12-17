@@ -6,6 +6,8 @@ import (
 
 type PageItem struct {
 	url     string
+	title   string
+	meta    string
 	content string
 }
 
@@ -23,11 +25,11 @@ func (pIs *PageItems) Find(url string) PageItem {
 	return pIs.pageItems[url]
 }
 
-func (pIs *PageItems) Add(url string, content string) {
+func (pIs *PageItems) Add(url, title, meta, content string) {
 	if pIs.pageItems == nil {
 		pIs.pageItems = make(map[string]PageItem)
 	}
-	pIs.pageItems[url] = PageItem{url, content}
+	pIs.pageItems[url] = PageItem{url, title, meta, content}
 }
 
 func (pIs *PageItems) Init() {
