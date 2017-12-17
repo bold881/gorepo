@@ -23,6 +23,15 @@ func add2crawl(ch2Crawl chan string, chPI chan PageItem) {
 	}
 }
 
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
+}
+
 func main() {
 	seedUrls := []string{
 		"http://www.cq.xinhuanet.com/",
@@ -48,11 +57,13 @@ func main() {
 	urls := GetCrawledUrls(session)
 
 	for _, szurl := range urls {
-		crwedUrls.Add(szurl.Url)
+		if !stringInSlice(szurl.Url, seedUrls) {
+			crwedUrls.Add(szurl.Url)
+		}
 	}
 
-	ch2Crawl := make(chan string)
-	chPageItem := make(chan PageItem)
+	ch2Crawl := make(chan string, 1000)
+	chPageItem := make(chan PageItem, 1000)
 
 	for _, url := range seedUrls {
 		go CrawlGoQuery(url, chPageItem, ch2Crawl)
@@ -62,13 +73,32 @@ func main() {
 
 	//go add2crawl(ch2Crawl, chPageItem, crawledUrls)
 
+	counter := 0
 	for {
-		url := <-ch2Crawl
-		go CrawlGoQuery(url, chPageItem, ch2Crawl)
-		time.Sleep(10 * time.Millisecond)
+		if len(ch2Crawl) > 0 {
+			url := <-ch2Crawl
+			go CrawlGoQuery(url, chPageItem, ch2Crawl)
+			fmt.Println("sleep 10 milliseconds...")
+			time.Sleep(10 * time.Millisecond)
+			continue
+		} else if counter < 100 {
+			counter++
+			fmt.Println("sleep 10 seconds...")
+			time.Sleep(10 * time.Second)
+			continue
+		}
+
+		if len(chPageItem) == 0 && len(ch2Crawl) == 0 {
+			fmt.Println("sleep 10 minutes...")
+			time.Sleep(10 * time.Minute)
+			counter = 0
+			for _, url := range seedUrls {
+				go CrawlGoQuery(url, chPageItem, ch2Crawl)
+			}
+		}
 	}
 
-	//close(ch2Crawl)
+	// close(ch2Crawl)
 
-	//close(chPageItem)
+	// close(chPageItem)
 }
