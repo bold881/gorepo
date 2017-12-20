@@ -46,7 +46,14 @@ func Clean(session *mgo.Session) {
 }
 
 func string2Time(rawstr string) time.Time {
-	strarr := strings.Split(rawstr, "来源")
+	var strarr []string
+	if strings.Contains(rawstr, "来源") {
+		strarr = strings.Split(rawstr, "来源")
+	} else if strings.Contains(rawstr, "來源") {
+		strarr = strings.Split(rawstr, "來源")
+	} else {
+		return
+	}
 	rawstr = strarr[0]
 	rawstr = strings.TrimSpace(rawstr)
 	rawstr = strings.Replace(rawstr, "年", "-", -1)
