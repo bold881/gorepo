@@ -78,12 +78,10 @@ func main() {
 		if len(ch2Crawl) > 0 {
 			url := <-ch2Crawl
 			go CrawlGoQuery(url, chPageItem, ch2Crawl)
-			fmt.Println("sleep 10 milliseconds...")
 			time.Sleep(10 * time.Millisecond)
 			continue
 		} else if counter < 100 {
 			counter++
-			fmt.Println("sleep 10 seconds...")
 			time.Sleep(10 * time.Second)
 			continue
 		}

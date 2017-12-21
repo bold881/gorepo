@@ -132,7 +132,10 @@ func CrawlGoQuery(szurl string, chPI chan PageItem, ch2Crawl chan string) {
 
 	doc, err := goquery.NewDocument(szurl)
 	if err != nil {
-		log.Fatal(err)
+		//log.Fatal(err)
+		log.Println(err)
+		crwedUrls.Del(szurl)
+		return
 	}
 
 	// news article

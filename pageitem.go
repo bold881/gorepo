@@ -65,3 +65,12 @@ func (cURLs *CrawledURLs) Add(url string) {
 	cURLs.crawled[url] = true
 	cURLs.Unlock()
 }
+
+func (cURLs *CrawledURLs) Del(url string) {
+	cURLs.Lock()
+	if cURLs.crawled == nil {
+		cURLs.crawled = make(map[string]bool)
+	}
+	delete(cURLs.crawled, url)
+	cURLs.Unlock()
+}

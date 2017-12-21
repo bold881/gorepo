@@ -52,7 +52,7 @@ func string2Time(rawstr string) time.Time {
 	} else if strings.Contains(rawstr, "來源") {
 		strarr = strings.Split(rawstr, "來源")
 	} else {
-		return
+		return time.Now()
 	}
 	rawstr = strarr[0]
 	rawstr = strings.TrimSpace(rawstr)
